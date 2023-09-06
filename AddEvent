@@ -203,7 +203,7 @@ function AddEvent(props) {
                                         <div className="item"><img className="event-img" src={values.slug} alt="Will show when there is a URL" /></div>
                                         <div className="item">
                                             <iframe title="moreMap" className="map mart-15" loading="lazy" allowFullScreen
-                                                referrerPolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyDp82astDJTAc4T64wLNAzhurZhzDe8k18&q=${values.latitude},${values.longitude}`}>
+                                                referrerPolicy="no-referrer-when-downgrade" src={}}>
                                             </iframe>
                                         </div>
                                     </div>
