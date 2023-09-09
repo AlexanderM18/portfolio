@@ -6,7 +6,7 @@ import { Formik, ErrorMessage, Field, Form } from "formik"; //useField
 import logoround from "../../../../assets/images/brand/wePairLogos/logoround.png";
 import { signInValSchema } from "../../../../schema/signInValidation";
 import { login } from "services/userService";
-import logger from "sabio-debug";
+import logger from "debug";
 import "./signup.css";
 import Swal from "sweetalert2";
 import toastr from "toastr";
