@@ -9,9 +9,9 @@ import { uploadFile } from "../../services/eventService";
 
 
 function AddFriends() {
-    const { state } = useLocation()//friend info from the friend card
+    const { state } = useLocation()
     const [userFormData, setUserFormData] = useState({ title: " ", bio: " ", summary: " ", headline: " ", slug: " ", ImageUrl: " ", statusId: " ", skills: undefined });
-    const { id } = useParams();//this gets me the id from the url since i set it as :id
+    const { id } = useParams()
     const [friendId, setFriendId] = useState(id)
     const [friendAdded, setFriendAdded] = useState(false);
 
@@ -70,17 +70,8 @@ function AddFriends() {
         );
     };
 
-    // const payload = userFormData;
-    return (<>
-
-        <Formik
-            initialValues={userFormData}
-            enableReinitialize
-            validationSchema={friendsValidationSchema}
-            onSubmit={(values, { setSubmitting }) => {
-                const skillsArray = values.skills?.split(',').map(skill => ({ name: skill.trim() }));
-                console.log("submit clicked", skillsArray)
-                // Construct primaryImage object again
+const formSubmit = (values) => {
+                const skillsArray = values.skills?.split(',').map(skill => ({ name: skill.trim() }))
                 const finalValues = { ...values, primaryImage: values.ImageUrl, skills: skillsArray && skillsArray[0].name !== "" ? skillsArray : null };
                 if (friendAdded) {
                     updateFriend(finalValues, finalValues.id)
@@ -115,18 +106,24 @@ function AddFriends() {
                         }
                     });
                     setFriendAdded(true);
-                    // toastr.success('Friend added successfully!');
+                    toastr.success('Friend added successfully!');
                 }
 
                 function onAddFriendError(error) {
                     console.log("error: ", error)
-                    // toastr.error('Friend added Failed!')
+                    toastr.error('Friend add Failed!')
                 }
-                setTimeout(() => {
-                    // toastr.warning(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 400);
-            }}>
+               
+            }
+
+
+    return (<>
+
+        <Formik
+            initialValues={userFormData}
+            enableReinitialize
+            validationSchema={friendsValidationSchema}
+            onSubmit={formSubmit}>
             <Form className="f-form-container">
                 <div className="cen form-head">{friendAdded || friendId ? (<h1>Update Friend</h1>) : (<h1>Add Friend</h1>)}</div>
                 <MyTextInput
