@@ -1,5 +1,5 @@
-﻿using Sabio.Data.Providers;
-using Sabio.Models.Domain.Users;
+﻿using Data.Providers;
+using Models.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,17 +7,17 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Sabio.Models.Domain.Friends;
-using Sabio.Data;
-using Sabio.Models.Requests.Users;
-using Sabio.Models.Requests.Friends;
-using Sabio.Services.Interfaces;
-using Sabio.Models;
-using Sabio.Data.Extensions;
+using Models.Domain.Friends;
+using Data;
+using Models.Requests.Users;
+using Models.Requests.Friends;
+using Services.Interfaces;
+using Models;
+using Data.Extensions;
 using System.Reflection;
 using Sabio.Models.Domain;
 
-namespace Sabio.Services
+namespace Services
 {
     public class FriendService : IFriendService
     {
@@ -30,22 +30,16 @@ namespace Sabio.Services
         #region Get
         public Friend Get(int id)
         {
-
-            string procName = "[dbo].[Friends_SelectById]";
-
             Friend friend = null;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteCmd("[dbo].[Friends_SelectById]", delegate (SqlParameterCollection paramCollection)
             {
 
                 paramCollection.AddWithValue("@Id", id);
             },
-            delegate (IDataReader reader, short set)//single record mapper
-            {   //one shape turn into second shape
-                //from reader DB >>> Address
-
+            delegate (IDataReader reader, short set)
+            {  
                friend = MapSingleFriend(reader);
-                //had User aUser
             }
             );
 
@@ -56,9 +50,7 @@ namespace Sabio.Services
         {
             List<Friend> list = null;
 
-            string procName = "[dbo].[Friends_SelectAll]";
-
-            _data.ExecuteCmd(procName, inputParamMapper: null,
+            _data.ExecuteCmd("[dbo].[Friends_SelectAll]", inputParamMapper: null,
            singleRecordMapper: delegate (IDataReader reader, short set)
            {
                Friend aFriend = MapSingleFriend(reader);
@@ -75,21 +67,16 @@ namespace Sabio.Services
             return list;
         }
 
-        #endregion
 
-        #region Add
 
         public int Add(FriendAddRequest model, int UserId)
         {
             int id = 0;
 
-            string procName = "[dbo].[Friends_Insert]";
-
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
+            _data.ExecuteNonQuery("[dbo].[Friends_Insert]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 AddCommonParams(model, col);
                 col.AddWithValue("@UserId", UserId);
-                //and one output
 
                 SqlParameter idOut = new SqlParameter("@Id", SqlDbType.Int);
                 idOut.Direction = ParameterDirection.Output;
@@ -107,15 +94,10 @@ namespace Sabio.Services
 
             return id;
         }
-        #endregion
-
-        #region Update
-
+ 
         public void Update(FriendUpdateRequest model, int UserId)
         {
-            string procName = "[dbo].[Friends_Update]";
-
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
+            _data.ExecuteNonQuery("[dbo].[Friends_Update]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 col.AddWithValue("@Id", model.Id);
                 AddCommonParams(model, col);
@@ -124,21 +106,16 @@ namespace Sabio.Services
             returnParameters: null);
 
         }
-        #endregion
-
-        #region Delete
+       
         public void Delete(int Id)
         {
-            string procName = "[dbo].[Friends_Delete]";
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteNonQuery("[dbo].[Friends_Delete]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", Id);
             },
                 returnParameters: null);
         }
-        #endregion
-
-        #region PaginateV1
+       
         public Paged<Friend> Pagination(int pageIndex, int pageSize)
         {
             Paged<Friend> pagedList = null;
@@ -169,26 +146,19 @@ namespace Sabio.Services
             return pagedList;
 
         }
-        #endregion
-
-        #region GetV3
+     
         public FriendV3 GetV3(int id)
         {
-
-            string procName = "[dbo].[Friends_SelectByIdV3]";
-
             FriendV3 friend = null;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection col)
+            _data.ExecuteCmd("[dbo].[Friends_SelectByIdV3]", delegate (SqlParameterCollection col)
             {
                 col.AddWithValue("@Id", id);
             },
-            delegate (IDataReader reader, short set)//single record mapper
-            {   //one shape turn into second shape
-                //from reader DB >>> Address
+            delegate (IDataReader reader, short set)
+            {  
                 int startingIndex = 0;
                 friend = MapSingleFriendV3(reader, ref startingIndex);
-                //had User aUser
             }
             );
 
@@ -199,9 +169,7 @@ namespace Sabio.Services
         {
             List<FriendV3> list = null;
 
-            string procName = "[dbo].[Friends_SelectAllV3]";
-
-            _data.ExecuteCmd(procName, inputParamMapper: null,
+            _data.ExecuteCmd("[dbo].[Friends_SelectAllV3]", inputParamMapper: null,
            singleRecordMapper: delegate (IDataReader reader, short set)
            {
                int startingIndex = 0;
@@ -291,14 +259,11 @@ namespace Sabio.Services
             return pagedList;
 
         }
-        #endregion
-
-        #region Add/InsertV3
+     
         public int AddV3(FriendAddRequestV3 model, int UserId)
         {
             int friendId = 0;
 
-            // Create a DataTable for the skills data
             DataTable skillsTable = new DataTable();
             skillsTable.Columns.Add("Name", typeof(string));
 
@@ -312,7 +277,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Friends_InsertV3]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 col.AddWithValue("@Title", model.Title);
@@ -344,7 +308,6 @@ namespace Sabio.Services
 
         public void UpdateV3(FriendUpdateRequestV3 model, int UserId)
         {
-            // Create a DataTable for the skills data
             DataTable skillsTable = new DataTable();
             skillsTable.Columns.Add("Name", typeof(string));
 
@@ -358,10 +321,9 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Friends_UpdateV3]", inputParamMapper: delegate (SqlParameterCollection col)
             {
-                col.AddWithValue("@Id", model.Id);  // Assuming model has Id property for update
+                col.AddWithValue("@Id", model.Id); 
                 col.AddWithValue("@Title", model.Title);
                 col.AddWithValue("@Bio", model.Bio);
                 col.AddWithValue("@Summary", model.Summary);
@@ -377,19 +339,15 @@ namespace Sabio.Services
                 col.Add(skillsParam);
             });
         }
-        #endregion
-
-        #region Delete
+     
         public void DeleteV3(int Id)
         {
-            string procName = "[dbo].[Friends_DeleteV3]";
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteNonQuery("[dbo].[Friends_DeleteV3]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", Id);
             },
                 returnParameters: null);
         }
-        #endregion
 
         private static FriendV3 MapSingleFriendV3(IDataReader reader, ref int startingIndex)
         {
