@@ -1,7 +1,7 @@
-﻿using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models.Domain.Friends;
-using Sabio.Models;
+﻿using Data;
+using Data.Providers;
+using Models.Domain.Friends;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,15 +9,15 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Sabio.Models.Domain.Jobs;
-using Sabio.Models.Domain;
-using Sabio.Services.Interfaces;
+using Models.Domain.Jobs;
+using Models.Domain;
+using Services.Interfaces;
 using Newtonsoft.Json;
-using Sabio.Models.Requests.Friends;
-using Sabio.Models.Requests.Jobs;
-using Sabio.Models.Domain.TechCompanies;
+using Models.Requests.Friends;
+using Models.Requests.Jobs;
+using Models.Domain.TechCompanies;
 
-namespace Sabio.Services
+namespace Services
 {
     public class JobService : IJobService
     {
@@ -30,12 +30,9 @@ namespace Sabio.Services
         #region Get
         public Job Get(int id)
         {
-
-            string procName = "[dbo].[Jobs_SelectById]";
-
             Job job = null;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection col)
+            _data.ExecuteCmd("[dbo].[Jobs_SelectById]", delegate (SqlParameterCollection col)
             {
                 col.AddWithValue("@Id", id);
             },
@@ -53,9 +50,7 @@ namespace Sabio.Services
         {
             List<Job> list = null;
 
-            string procName = "[dbo].[Jobs_SelectAll]";
-
-            _data.ExecuteCmd(procName, inputParamMapper: null,
+            _data.ExecuteCmd("[dbo].[Jobs_SelectAll]", inputParamMapper: null,
            singleRecordMapper: delegate (IDataReader reader, short set)
            {
                int startingIndex = 0;
@@ -143,14 +138,10 @@ namespace Sabio.Services
             return pagedList;
 
         }
-        #endregion
-
-        #region Add/Update
+   
         public int Add(JobAddRequest model)
         {
             int jobId = 0;
-
-            // Create a DataTable for the skills data
             DataTable skillsTable = new DataTable();
             skillsTable.Columns.Add("Name", typeof(string));
 
@@ -164,7 +155,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Jobs_Insert]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 col.AddWithValue("@Title", model.Title);
@@ -192,7 +182,6 @@ namespace Sabio.Services
         }
         public void Update(JobUpdateRequest model)
         {
-            // Create a DataTable for the skills data
             DataTable skillsTable = new DataTable();
             skillsTable.Columns.Add("Name", typeof(string));
 
@@ -206,7 +195,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Jobs_UpdateById]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", model.Id);
@@ -228,8 +216,7 @@ namespace Sabio.Services
         #region Delete
         public void Delete(int Id)
         {
-            string procName = "[dbo].[Jobs_DeleteById]";
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteNonQuery("[dbo].[Jobs_DeleteById]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", Id);
             },
