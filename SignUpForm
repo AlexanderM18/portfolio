@@ -2,7 +2,7 @@ import { Fragment, React, useState } from "react";
 import { Link } from "react-router-dom";
 import { Col, Row, Card, Button, Image } from "react-bootstrap";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import { Formik, ErrorMessage, Field, Form } from "formik"; //useField
+import { Formik, ErrorMessage, Field, Form } from "formik"; 
 import logoround from "../../../../assets/images/brand/wePairLogos/logoround.png";
 import { signUpValSchema } from "./signUpValidation";
 import { register } from "services/userService";
