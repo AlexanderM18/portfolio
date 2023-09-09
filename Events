@@ -15,7 +15,7 @@ import UilCalender from "@iconscout/react-unicons/icons/uil-calender";
 import UilMap from "@iconscout/react-unicons/icons/uil-map";
 import UilImage from "@iconscout/react-unicons/icons/uil-image";
 import party from "../../services/party.mp4";
-import debug from "sabio-debug";
+import debug from "debug";
 import AddPart1 from "./AddPart1";
 import AddPart2 from "./AddPart2";
 import AddPart3 from "./AddPart3";
