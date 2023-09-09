@@ -1,7 +1,7 @@
-﻿using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models.Domain.TechCompanies;
-using Sabio.Models;
+﻿using Data;
+using Data.Providers;
+using Models.Domain.TechCompanies;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,15 +9,15 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Sabio.Models.Domain.Events;
-using Sabio.Models.Domain.Friends;
-using Sabio.Models.Domain.Jobs;
-using Sabio.Models.Requests.TechComps;
-using Sabio.Models.Requests.Events;
-using Sabio.Services.Interfaces;
-using Sabio.Models.Requests.Friends;
+using Models.Domain.Events;
+using Models.Domain.Friends;
+using Models.Domain.Jobs;
+using Models.Requests.TechComps;
+using Models.Requests.Events;
+using Services.Interfaces;
+using Models.Requests.Friends;
 
-namespace Sabio.Services
+namespace .Services
 {
     public class EventService : IEventService
     {
@@ -29,12 +29,9 @@ namespace Sabio.Services
         #region Get
         public Event Get(int id)
         {
-
-            string procName = "[dbo].[Events_GetById]";
-
             Event anEvent = null;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteCmd("[dbo].[Events_GetById]", delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", id);
             },
@@ -51,9 +48,7 @@ namespace Sabio.Services
         {
             List<Event> list = null;
 
-            string procName = "[dbo].[Events_GetAll]";
-
-            _data.ExecuteCmd(procName, inputParamMapper: null,
+            _data.ExecuteCmd("[dbo].[Events_GetAll]", inputParamMapper: null,
            singleRecordMapper: delegate (IDataReader reader, short set)
            {
                Event anEvent = MapSingleEvent(reader);
@@ -249,8 +244,7 @@ namespace Sabio.Services
         #region Delete
         public void Delete(int Id)
         {
-            string procName = "[dbo].[Events_Delete]";
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteNonQuery("[dbo].[Events_Delete]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", Id);
             },
