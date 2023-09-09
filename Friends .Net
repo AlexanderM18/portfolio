@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Sabio.Models.Domain.Friends;
-using Sabio.Services.Interfaces;
-using Sabio.Services;
-using Sabio.Web.Controllers;
-using Sabio.Web.Models.Responses;
+using Models.Domain.Friends;
+using Services.Interfaces;
+using Services;
+using Web.Controllers;
+using Web.Models.Responses;
 using System.Collections.Generic;
 using System;
-using Sabio.Models;
-using Sabio.Models.Requests.Friends;
+using Models;
+using Models.Requests.Friends;
 using System.Linq;
 
-namespace Sabio.Web.Api.Controllers
+namespace Web.Api.Controllers
 {
     [Route("api/v3/friends")]
     [ApiController]
@@ -25,8 +25,7 @@ namespace Sabio.Web.Api.Controllers
             _authService = authService;
         }
 
-        #region Gets
-        //GET api/v3/friends
+      
         [HttpGet]
         public ActionResult<ItemsResponse<FriendV3>> GetAll()
         {
@@ -56,7 +55,6 @@ namespace Sabio.Web.Api.Controllers
             return StatusCode(code, response);
         }
 
-        //api/v3/friends/{id:int}  route pattern
         [HttpGet("{id:int}")]
         public ActionResult<ItemResponse<FriendV3>> GetById(int id)
         {
@@ -87,7 +85,6 @@ namespace Sabio.Web.Api.Controllers
 
         }
 
-        //api/v3/friends/paginate
         [HttpGet("paginate")]
         public ActionResult<ItemResponse<Paged<FriendV3>>> PaginationV3(int pageIndex, int PageSize)
         {
@@ -117,7 +114,6 @@ namespace Sabio.Web.Api.Controllers
             return result;
         }
 
-        //api/v3/friends/paginate
         [HttpGet("search")]
         public ActionResult<ItemResponse<Paged<FriendV3>>> SearchPaginationV3(int pageIndex, int PageSize, string query="")
         {
@@ -146,25 +142,20 @@ namespace Sabio.Web.Api.Controllers
 
             return result;
         }
-        #endregion
-
-
-        #region Add/Update
 
         [HttpPost]
         public ActionResult<ItemResponse<int>> Create(FriendAddRequestV3 model)
-        {//id of the new address
+        {
 
-            //gets just the id of the current user
+           
             int userId = _authService.GetCurrentUserId();
-            //Gets whole user
+         
             IUserAuthData user = _authService.GetCurrentUser();
 
             ObjectResult result = null;
 
             try
             {
-                // Obtain skill names from model.Skills and store them in the skillsArray variable
                 if (model.Skills != null && model.Skills.Any())
                 {
                     List<string> skillsArray = model.Skills.Select(skill => skill.Name).ToList();
@@ -189,7 +180,7 @@ namespace Sabio.Web.Api.Controllers
         public ActionResult<ItemResponse<int>> UpdateV3(int id, FriendUpdateRequestV3 model)
         {
             int userId = _authService.GetCurrentUserId();
-            //Gets whole user
+         
             IUserAuthData friend = _authService.GetCurrentUser();
 
             int code = 200;
@@ -198,13 +189,11 @@ namespace Sabio.Web.Api.Controllers
             try
             {
                 model.Id = id;
-                // Obtain skill names from model.Skills and store them in the skillsArray variable
                 if (model.Skills != null && model.Skills.Any())
                 {
                     List<string> skillsArray = model.Skills.Select(skill => skill.Name).ToList();
                     model.Skills = skillsArray.Select(skillName => new Skill { Name = skillName }).ToList();
                 }
-
 
                 _service.UpdateV3(model, friend.Id);
 
@@ -218,8 +207,6 @@ namespace Sabio.Web.Api.Controllers
 
             return StatusCode(code, response);
         }
-
-        #endregion
 
 
         [HttpDelete("{id:int}")]
