@@ -15,7 +15,7 @@ using Services.Interfaces;
 using Models;
 using Data.Extensions;
 using System.Reflection;
-using Sabio.Models.Domain;
+using Models.Domain;
 
 namespace Services
 {
