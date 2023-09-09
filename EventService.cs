@@ -192,7 +192,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Events_Insert]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 AddCommonParams(model, col);
@@ -237,7 +236,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[Events_Update]", inputParamMapper: delegate (SqlParameterCollection col)
             {
                 AddCommonParams(model, col);
