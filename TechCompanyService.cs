@@ -1,7 +1,7 @@
-﻿using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models.Domain.Jobs;
-using Sabio.Models;
+﻿using Data;
+using Data.Providers;
+using Models.Domain.Jobs;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,14 +9,14 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Sabio.Models.Domain.TechCompanies;
-using Sabio.Models.Domain.Friends;
-using Sabio.Models.Domain;
-using Sabio.Services.Interfaces;
-using Sabio.Models.Requests.TechComps;
-using Sabio.Models.Domain.Events;
+using Models.Domain.TechCompanies;
+using Models.Domain.Friends;
+using Models.Domain;
+using Services.Interfaces;
+using Models.Requests.TechComps;
+using Models.Domain.Events;
 
-namespace Sabio.Services
+namespace Services
 {
     public class TechCompanyService : ITechCompanyService
     {
@@ -29,12 +29,9 @@ namespace Sabio.Services
         #region Get
         public TechCompany Get(int id)
         {
-
-            string procName = "[dbo].[TechCompanies_SelectById]";
-
             TechCompany techCompany = null;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteCmd("[dbo].[TechCompanies_SelectById]", delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", id);
             },
@@ -52,9 +49,7 @@ namespace Sabio.Services
         {
             List<TechCompany> list = null;
 
-            string procName = "[dbo].[TechCompanies_SelectAll]";
-
-            _data.ExecuteCmd(procName, inputParamMapper: null,
+            _data.ExecuteCmd("[dbo].[TechCompanies_SelectAll]", inputParamMapper: null,
            singleRecordMapper: delegate (IDataReader reader, short set)
            {
                int startingIndex = 0;
@@ -143,9 +138,7 @@ namespace Sabio.Services
             return pagedList;
 
         }
-        #endregion
 
-        #region Add/Update
         public int Add(TechCompAddRequest model)
         {
             int compId = 0;
@@ -205,7 +198,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure
             _data.ExecuteNonQuery("[dbo].[TechCompanies_Insert]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Name", model.Name);
@@ -241,7 +233,7 @@ namespace Sabio.Services
             return compId;
         }
         public void Update(TechCompUpdateRequest model)
-        {// DataTable for the Tags
+        {
             DataTable tagsTable = new DataTable();
             tagsTable.Columns.Add("Tag", typeof(string));
 
@@ -255,7 +247,6 @@ namespace Sabio.Services
                 }
             }
 
-            // DataTable for the Urls
             DataTable urlsTable = new DataTable();
             urlsTable.Columns.Add("Url", typeof(string));
 
@@ -269,7 +260,6 @@ namespace Sabio.Services
                 }
             }
 
-            // DataTable for the Images
             DataTable imagesTable = new DataTable();
             imagesTable.Columns.Add("Url", typeof(string));
             imagesTable.Columns.Add("TypeId", typeof(int));
@@ -285,7 +275,6 @@ namespace Sabio.Services
                 }
             }
 
-            // DataTable for the ContactInfo
             DataTable contactsTable = new DataTable();
             contactsTable.Columns.Add("Email", typeof(string));
             contactsTable.Columns.Add("PhoneNumber", typeof(string));
@@ -301,7 +290,6 @@ namespace Sabio.Services
                 }
             }
 
-            // Call the stored procedure for updating TechCompanies
             _data.ExecuteNonQuery("[dbo].[TechCompanies_Update]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", model.Id);
@@ -333,8 +321,7 @@ namespace Sabio.Services
         #region Delete
         public void Delete(int Id)
         {
-            string procName = "[dbo].[TechCompanies_Delete]";
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            _data.ExecuteNonQuery("[dbo].[TechCompanies_Delete]", inputParamMapper: delegate (SqlParameterCollection paramCollection)
             {
                 paramCollection.AddWithValue("@Id", Id);
             },
